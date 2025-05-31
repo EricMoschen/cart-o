@@ -2,13 +2,14 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <title>Eu Te Amo, Jéssica</title>
+  <title>Mini Declaração</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <link
     href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"
     rel="stylesheet"
   />
   <style>
+    /* ...mesmo CSS do código anterior... */
     * {
       box-sizing: border-box;
     }
@@ -20,7 +21,6 @@
       background: black;
       font-family: Arial, sans-serif;
       color: white;
-      /* REMOVIDO overflow: hidden para funcionar no iOS */
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -51,6 +51,7 @@
       text-align: center;
       flex-grow: 1;
       justify-content: center;
+      min-height: 150px;
     }
 
     #startBtn {
@@ -77,9 +78,11 @@
       color: white;
       text-shadow: 0 0 10px #ff4da6, 0 0 20px #ff4da6;
       opacity: 0;
-      transition: opacity 1s ease-in;
+      transition: opacity 0.5s ease-in-out;
       max-width: 90vw;
       word-wrap: break-word;
+      min-height: 70px;
+      user-select: none;
     }
 
     #dedicatoria {
@@ -115,7 +118,8 @@
         padding: 24px 48px;
       }
       #loveText {
-        font-size: 36px;
+        font-size: 28px;
+        min-height: 100px;
       }
       #dedicatoria {
         font-size: 14px;
@@ -129,7 +133,7 @@
 
   <div id="container">
     <button id="startBtn">Clique Aqui 💖</button>
-    <div id="loveText">Eu Te Amo</div>
+    <div id="loveText"></div>
   </div>
 
   <div id="dedicatoria">Feito com carinho para você, Jéssica ❤️</div>
@@ -251,19 +255,66 @@
       requestAnimationFrame(animateHeart);
     }
 
+    const lyrics = [
+      "Eu tô apaixonado, eu tô contando tudo",
+      "E não tô nem ligando pro que vão dizer",
+      "Amar não é pecado e se eu tiver errado",
+      "Que se dane o mundo, eu só quero você"
+    ];
+
+    function showLyricsSequentially(lines, index = 0) {
+      if (index >= lines.length) {
+        setTimeout(() => {
+          loveText.style.opacity = 0;
+          setTimeout(() => {
+            loveText.textContent = "Eu te Amo";
+            loveText.style.opacity = 1;
+
+            setTimeout(() => {
+              loveText.style.opacity = 0;
+              setTimeout(() => {
+                loveText.textContent = "To Com Saudade🥺";
+                loveText.style.opacity = 1;
+              }, 500);
+            }, 1000);
+          }, 500);
+        }, 500);
+        return;
+      }
+
+      loveText.style.opacity = 0;
+      setTimeout(() => {
+        loveText.textContent = lines[index];
+        loveText.style.opacity = 1;
+
+        setTimeout(() => {
+          loveText.style.opacity = 0;
+          setTimeout(() => {
+            showLyricsSequentially(lines, index + 1);
+          }, 500);
+        }, 3000);
+      }, 500);
+    }
+
     ["click", "touchstart"].forEach((eventType) => {
       button.addEventListener(eventType, (e) => {
         e.preventDefault();
         if (button.style.display === "none") return;
 
         button.style.display = "none";
+
+        // Começar animação da chuva de corações pequenos
         createMiniHearts(100);
         animateMiniHearts();
 
+        // A música foi removida, então aqui não toca nada mais
+
+        // Após 4 segundos, aparecer coração grande e letras
         setTimeout(() => {
           canvasHeart.classList.add("pulsing");
           loveText.style.opacity = 1;
           animateHeart();
+          showLyricsSequentially(lyrics);
         }, 4000);
       });
     });
